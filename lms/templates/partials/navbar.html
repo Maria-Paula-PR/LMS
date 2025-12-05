@@ -1,0 +1,28 @@
+<nav class="bg-gray-800 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">MiLMS</h1>
+    <div>
+        {% if user.is_authenticated %}
+        <div class="flex items-center gap-4">
+            <a href="{% url 'panel_cursos' %}" class="flex items-center gap-1 text-white hover:text-gray-300 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A8.056 8.056 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                </svg>
+                <span>Mis Cursos</span>
+            </a>
+            <div class="h-6 w-px bg-gray-600"></div>
+            <div class="flex items-center gap-2">
+                {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full object-cover" />
+                {% else %}
+                <div class="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-sm font-semibold">
+                    {{user.username|slice:":1"|upper }}</div>
+                {% endif %}
+                <span>{{ user.username }}</span>
+            </div>
+            <a href="{% url 'logout' %}" class="bg-red-600 px-3 py-1 rounded text-white hover:bg-red-700 transition-colors">Cerrar sesión</a>
+        </div>
+        {% else %}
+        <button class="bg-blue-500 px-4 py-2 rounded" onclick="openModal()">Iniciar Sesión</button>
+        {% endif %}
+    </div>
+</nav>

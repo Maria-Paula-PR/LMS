@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Panel de Cursos{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto p-6">
+  {% if messages %}
+  <div class="mb-6">
+    {% for message in messages %}
+    <div class="p-4 rounded border
+      {% if message.tags == 'success' %} bg-green-100 border-green-300 text-green-800
+      {% elif message.tags == 'error' %} bg-red-100 border-red-300 text-red-800
+      {% else %} bg-blue-100 border-blue-300 text-blue-800 {% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h1 class="text-2xl font-bold mb-6">Panel de Cursos</h1>
+  
+  <!-- Sección de Cursos Inscritos -->
+  {% if enrolled_courses %}
+  <div class="mb-12">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Mis Cursos</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for item in enrolled_courses %}
+      <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        {% if item.course.thumbnail %}
+        <img class="w-full h-40 object-cover rounded-t-lg" src="{{ item.course.thumbnail.url }}" alt="{{ item.course.title }}">
+        {% endif %}
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-semibold text-gray-800">{{ item.course.title }}</h3>
+            <span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">Inscrito</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3">
+            {{ item.course.short_description|default:item.course.description|truncatewords:15 }}
+          </p>
+          
+          <!-- Barra de progreso -->
+          <div class="mb-3">
+            <div class="flex justify-between text-xs text-gray-500 mb-1">
+              <span>Progreso</span>
+              <span>{{ item.progress }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: {{ item.progress }}%"></div>
+            </div>
+          </div>
+          
+          <a href="{% url 'curso_contenido' item.course.id %}" class="block text-center bg-blue-100 text-blue-700 font-medium py-2 rounded hover:bg-blue-200 transition-colors">
+            Continuar Curso
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sección de Cursos Disponibles -->
+  <div>
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Cursos Disponibles</h2>
+    {% if available_courses %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for item in available_courses %}
+      <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        {% if item.course.thumbnail %}
+        <img class="w-full h-40 object-cover rounded-t-lg" src="{{ item.course.thumbnail.url }}" alt="{{ item.course.title }}">
+        {% endif %}
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ item.course.title }}</h3>
+          <p class="text-sm text-gray-600 mb-4">
+            {{ item.course.short_description|default:item.course.description|truncatewords:15 }}
+          </p>
+          <form method="POST" action="{% url 'inscribirse_curso' item.course.id %}">
+            {% csrf_token %}
+            <button type="submit" class="w-full bg-blue-600 text-white font-medium py-2 rounded hover:bg-blue-700 transition-colors">
+              Inscribirme
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-600">No hay cursos disponibles en este momento.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
